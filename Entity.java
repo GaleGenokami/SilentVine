@@ -4,7 +4,7 @@
  */
  
  import java.awt.*;
- 
+
  public abstract class Entity {
 
     // Java Note: the visibility modifier "protected"
@@ -34,6 +34,10 @@
        sprite = (SpriteStore.get()).getSprite(r);
        
      } // constructor
+     
+     public void setSprite(String r) {
+    	 sprite = (SpriteStore.get()).getSprite(r);
+     }
 
      /* move
       * input: delta - the amount of time passed in ms
