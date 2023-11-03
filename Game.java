@@ -4,6 +4,9 @@
  */
 
 import javax.swing.*;
+
+
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -28,8 +31,8 @@ public class Game extends Canvas {
                                                             // to remove this loop
         public Entity ship;  // the ship
         private double moveSpeed = 2000; // hor. vel. of ship (px/s)
-        private long lastFire = 0; // time last shot fired
-        private long firingInterval = 500; // interval between shots (ms)
+        private long shipLastFire = 0; // time last shot fired
+        private long firingInterval = 750; // interval between shots (ms)
         private int alienCount; // # of aliens left on screen
 
         private String message = ""; // message to display while waiting
@@ -183,12 +186,12 @@ public class Game extends Canvas {
         /* Attempt to fire.*/
         public void tryToFire() {
           // check that we've waited long enough to fire
-          if ((System.currentTimeMillis() - lastFire) < firingInterval){
+          if ((System.currentTimeMillis() - shipLastFire) < firingInterval){
             return;
           } // if
 
           // otherwise add a shot
-          lastFire = System.currentTimeMillis();
+          shipLastFire = System.currentTimeMillis();
           ShotEntity shot = new ShotEntity(this, "sprites/shot.gif", 
                             ship.getX() + 10, ship.getY() - 30);
           entities.add(shot);
@@ -208,7 +211,11 @@ public class Game extends Canvas {
 	 */
 	public void gameLoop() {
           long lastLoopTime = System.currentTimeMillis();
-
+          int loopCount = 0;
+          boolean sonarFired = false;
+          int sonarCenterX = 0;
+          int sonarCenterY = 0;
+          
           // keep loop running until game ends
           while (gameRunning) {
             
@@ -274,7 +281,30 @@ public class Game extends Canvas {
            }  // if
            
            
-           
+           // if spacebar pressed, try to fire
+           if (firePressed && !((System.currentTimeMillis() - shipLastFire) < firingInterval)) {
+               shipLastFire = System.currentTimeMillis();
+               sonarFired = true;
+               sonarCenterX = 500;
+               sonarCenterY = 500;
+           } // if
+
+           if (sonarFired) {
+               loopCount++;
+               g.setColor(Color.white);
+               g.drawOval(sonarCenterX - loopCount * 2, sonarCenterY - loopCount * 2, loopCount * 4, loopCount * 4);
+               for (int i = 0; i < entities.size(); i++) {
+                   if (entities.get(i) instanceof AlienEntity) {
+                       if (((AlienEntity) entities.get(i)).inCircle((double) sonarCenterX, (double) sonarCenterY, loopCount * 2)) {
+                           ((Entity) entities.get(i)).setSprite(("alienDetected.png"));
+                       }
+                   }
+               }
+               if (loopCount * 4 >= firingInterval) {
+                   sonarFired = false;
+                   loopCount = 0;
+               }
+           }
            
             // clear graphics and flip buffer
             g.dispose();
@@ -297,10 +327,7 @@ public class Game extends Canvas {
                 ship.setVerticalMovement(moveSpeed);
             } // else
 
-            // if spacebar pressed, try to fire
-            if (firePressed) {
-              tryToFire();
-            } // if
+            
 
             // pause
             try { Thread.sleep(10); } catch (Exception e) {}
