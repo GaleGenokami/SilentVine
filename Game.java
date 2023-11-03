@@ -23,6 +23,7 @@ public class Game extends Canvas {
         private boolean upPressed = false;  // true if left arrow key currently pressed
         private boolean downPressed = false; // true if right arrow key currently pressed
         private boolean firePressed = false; // true if firing
+        private boolean clearPressed = false;
 
         private boolean gameRunning = true;
         private ArrayList entities = new ArrayList(); // list of entities
@@ -213,6 +214,7 @@ public class Game extends Canvas {
           long lastLoopTime = System.currentTimeMillis();
           int loopCount = 0;
           boolean sonarFired = false;
+          boolean clear = false;
           int sonarCenterX = 0;
           int sonarCenterY = 0;
           
@@ -228,7 +230,6 @@ public class Game extends Canvas {
             Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, worldWidth, worldHeight);
-           	tileM.draw((Graphics2D)g);
 
             // move each entity
             if (!waitingForKeyPress) {
@@ -237,6 +238,37 @@ public class Game extends Canvas {
                 entity.move(delta);
               } // for
             } // if
+            
+         // if spacebar pressed, try to fire
+            if (firePressed && !((System.currentTimeMillis() - shipLastFire) < firingInterval)) {
+                shipLastFire = System.currentTimeMillis();
+                sonarFired = true;
+                sonarCenterX = ship.getX();
+                sonarCenterY = ship.getY();
+            } // if
+            
+            if (clearPressed) {
+            	clear = !clear;
+            }
+            
+           	tileM.draw(520 - loopCount / 2 - (ship.getX() - sonarCenterX), 520 - loopCount / 2 - (ship.getY() - sonarCenterY), (Graphics2D)g, (double)loopCount * 2, clear);
+
+            if (sonarFired) {
+                loopCount++;
+                g.setColor(Color.white);
+                g.drawOval(520 - loopCount * 2 - (ship.getX() - sonarCenterX), 520 - loopCount * 2 - (ship.getY() - sonarCenterY), loopCount * 4, loopCount * 4);
+                for (int i = 0; i < entities.size(); i++) {
+                    if (entities.get(i) instanceof AlienEntity) {
+                        if (((AlienEntity) entities.get(i)).inCircle(520 - loopCount / 2 - (ship.getX() - sonarCenterX), 520 - loopCount / 2 - (ship.getY() - sonarCenterY), loopCount * 2)) {
+                            ((Entity) entities.get(i)).setSprite(("alienDetected.png"));
+                        }
+                    }
+                }
+                if (loopCount * 4 >= firingInterval) {
+                    sonarFired = false;
+                    loopCount = 0;
+                }
+            }
 
             // draw all entities
             for (int i = 0; i < entities.size(); i++) {
@@ -281,30 +313,7 @@ public class Game extends Canvas {
            }  // if
            
            
-           // if spacebar pressed, try to fire
-           if (firePressed && !((System.currentTimeMillis() - shipLastFire) < firingInterval)) {
-               shipLastFire = System.currentTimeMillis();
-               sonarFired = true;
-               sonarCenterX = 500;
-               sonarCenterY = 500;
-           } // if
-
-           if (sonarFired) {
-               loopCount++;
-               g.setColor(Color.white);
-               g.drawOval(sonarCenterX - loopCount * 2, sonarCenterY - loopCount * 2, loopCount * 4, loopCount * 4);
-               for (int i = 0; i < entities.size(); i++) {
-                   if (entities.get(i) instanceof AlienEntity) {
-                       if (((AlienEntity) entities.get(i)).inCircle((double) sonarCenterX, (double) sonarCenterY, loopCount * 2)) {
-                           ((Entity) entities.get(i)).setSprite(("alienDetected.png"));
-                       }
-                   }
-               }
-               if (loopCount * 4 >= firingInterval) {
-                   sonarFired = false;
-                   loopCount = 0;
-               }
-           }
+           
            
             // clear graphics and flip buffer
             g.dispose();
@@ -396,6 +405,10 @@ public class Game extends Canvas {
                   if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     firePressed = true;
                   } // if
+                  
+                  if (e.getKeyCode() == KeyEvent.VK_B) {
+                      clearPressed = true;
+                  } // if
 
 		} // keyPressed
 
@@ -425,6 +438,10 @@ public class Game extends Canvas {
 
                   if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     firePressed = false;
+                  } // if
+                  
+                  if (e.getKeyCode() == KeyEvent.VK_B) {
+                      clearPressed = false;
                   } // if
 
 		} // keyReleased

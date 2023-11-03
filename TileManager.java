@@ -35,6 +35,8 @@ public class TileManager {
 			tile[4].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tree.png"));
 			tile[5] = new Tile();
 			tile[5].image = ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png"));
+			tile[6] = new Tile();
+			tile[6].image = ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png"));
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -73,7 +75,7 @@ public class TileManager {
 		}
 	}
 	
-	public void draw(Graphics2D g2) {
+	public void draw(double circleX, double circleY, Graphics2D g2, double r, boolean clear) {
 		
 		int worldCol = 0;
 		int worldRow = 0;
@@ -83,21 +85,26 @@ public class TileManager {
 		int screenX = 0;
 		int screenY = 0;
 		
-		
 		while(worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
-			tileNum = mapTileNum[worldCol][worldRow];
+			if (clear == true) {
+				tileNum = 6;
+			} else {
+				tileNum = mapTileNum[worldCol][worldRow];
+			}
+			
 			worldX = worldCol * gp.tileSize;
 			worldY = worldRow * gp.tileSize;
 			screenX = worldX - gp.ship.getX() + ((ShipEntity) gp.ship).screenX;
 			screenY = worldY - gp.ship.getY() + ((ShipEntity) gp.ship).screenY;
 			
-			
 			if( worldX + gp.tileSize > ((ShipEntity) gp.ship).x - ((ShipEntity) gp.ship).screenX && 
 				worldX - gp.tileSize < ((ShipEntity) gp.ship).x + ((ShipEntity) gp.ship).screenX && 
 				worldY + gp.tileSize > ((ShipEntity) gp.ship).y - ((ShipEntity) gp.ship).screenY && 
 				worldY - gp.tileSize < ((ShipEntity) gp.ship).y + ((ShipEntity) gp.ship).screenY) {
-				
-				g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+					
+				if (inCircle(circleX, circleY, screenX, screenY, r)) {
+					g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+				}
 			}
 			
 			worldCol++;
@@ -106,8 +113,30 @@ public class TileManager {
 				worldCol = 0;
 				worldRow++;
 			}
-			
 		}
 	
 	}
+	
+	private boolean inCircle(double circleX, double circleY, double x, double y, double r) {
+        // temporary variables to set edges for testing
+        double testX = x;
+        double testY = y;
+
+        // which edge is closest?
+        if (x < circleX) testX = circleX; // test left edge
+        else if (x > circleX + gp.tileSize) testX = circleX + gp.tileSize; // right edge
+        if (y < circleY) testY = circleY; // top edge
+        else if (y > circleY + gp.tileSize) testY = circleY + gp.tileSize; // bottom edge
+
+        // get distance from closest edges
+        double distX = x - testX;
+        double distY = y - testY;
+        double distance = Math.sqrt((distX * distX) + (distY * distY));
+
+        // if the distance is less than the radius, collision!
+        if (distance <= r) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -42,7 +42,7 @@
      /* move
       * input: delta - the amount of time passed in ms
       * output: none
-      * purpose: after a certain amout of time has passed,
+      * purpose: after a certain amount of time has passed,
       *          update the location
       */
      public void move(long delta) {
@@ -108,5 +108,30 @@
       *       that extends this class
       */
       public abstract void collidedWith(Entity other);
+      
+
+      
+      public boolean inCircle(double x, double y, double r) {
+          // temporary variables to set edges for testing
+          double testX = x;
+          double testY = y;
+
+          // which edge is closest?
+          if (x < this.getX()) testX = this.getX(); // test left edge
+          else if (x > this.getX() + this.sprite.getWidth()) testX = this.getX() + this.sprite.getWidth(); // right edge
+          if (y < this.getY()) testY = this.getY(); // top edge
+          else if (y > this.getY() + this.sprite.getHeight()) testY = this.getY() + this.sprite.getHeight(); // bottom edge
+
+          // get distance from closest edges
+          double distX = x - testX;
+          double distY = y - testY;
+          double distance = Math.sqrt((distX * distX) + (distY * distY));
+
+          // if the distance is less than the radius, collision!
+          if (distance <= r) {
+              return true;
+          }
+          return false;
+      }
 
  } // Entity class
