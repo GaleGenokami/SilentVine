@@ -7,13 +7,13 @@ import java.io.BufferedReader;
 
 public class TileManager {
 	private Game gp;
-	private Tile[] tile;
+	private TileType[] tile;
 	private int mapTileNum[][];
 	
 	public TileManager(Game gp) {
 		this.gp = gp;
 		
-		tile = new Tile[10];
+		tile = new TileType[10];
 		mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 		
 		getTileImage();
@@ -23,17 +23,17 @@ public class TileManager {
 	public void getTileImage() {
 		
 		try {
-			tile[0] = new Tile();
+			tile[0] = new TileType();
 			tile[0].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/grass.png")));
-			tile[1] = new Tile();
+			tile[1] = new TileType();
 			tile[1].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/wall.png")));
-			tile[2] = new Tile();
+			tile[2] = new TileType();
 			tile[2].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/water.png")));
-			tile[3] = new Tile();
+			tile[3] = new TileType();
 			tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/earth.png")));
-			tile[4] = new Tile();
+			tile[4] = new TileType();
 			tile[4].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/tree.png")));
-			tile[5] = new Tile();
+			tile[5] = new TileType();
 			tile[5].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png")));
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -138,11 +138,11 @@ public class TileManager {
         return false;
     }
 
-	public Tile[] getTile() {
+	public TileType[] getTile() {
 		return tile;
 	}
 
-	public void setTile(Tile[] tile) {
+	public void setTile(TileType[] tile) {
 		this.tile = tile;
 	}
 

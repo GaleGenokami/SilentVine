@@ -122,17 +122,23 @@ public class Game extends Canvas {
               ship = new ShipEntity(this, "sprites/ship.gif", tileSize * 23, tileSize * 21);
               entities.add(ship);
     
-             /* // create a block of aliens (5x12)
+             // create a block of aliens (5x12)
               alienCount = 0;
-              for (int row = 0; row < 5; row++) {
-                for (int col = 0; col < 12; col++) {
+              for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 2; col++) {
                   Entity alien = new AlienEntity(this, "sprites/alien.gif", 
-                      100 + (col * 40),
-                      50 + (row * 30));
+                      100 + (col * 10 * tileSize),
+                      50 + (row * 10 * tileSize), "");
                   entities.add(alien);
                   alienCount++;
                 } // for
-              } // outer for*/
+              } // outer for
+              for (int x = 0; x < 5; x++) {
+            	  Entity alien = new AlienEntity(this, "sprites/alien.gif",
+            		  100 + x * tileSize * 15, 100 + x * tileSize * 15, "Heavy");
+            	  entities.add(alien);
+                  alienCount++;
+              }
     	} // initEntities
 
         /* Notification from a game entity that the logic of the game
@@ -235,7 +241,11 @@ public class Game extends Canvas {
             if (!waitingForKeyPress) {
               for (int i = 0; i < entities.size(); i++) {
                 Entity entity = (Entity) entities.get(i);
-                entity.move(delta);
+                if (entity instanceof AlienEntity) {
+                	entity.move(0);
+                } else {
+                	entity.move(delta);
+                }
               } // for
             } // if
             
@@ -296,14 +306,14 @@ public class Game extends Canvas {
            entities.removeAll(removeEntities);
            removeEntities.clear();
 
-           // run logic if required
+           /*// run logic if required
            if (logicRequiredThisLoop) {
              for (int i = 0; i < entities.size(); i++) {
                Entity entity = (Entity) entities.get(i);
                entity.doLogic();
              } // for
              logicRequiredThisLoop = false;
-           } // if
+           } // if*/
 
            // if waiting for "any key press", draw message
            if (waitingForKeyPress) {

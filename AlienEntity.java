@@ -7,16 +7,19 @@ public class AlienEntity extends Entity {
   private double moveSpeed = 75; // horizontal speed
 
   private Game game; // the game in which the alien exists
+  
+  private String alienType = "";
 
   /* construct a new alien
    * input: game - the game in which the alien is being created
    *        r - the image representing the alien
    *        x, y - initial location of alien
    */
-  public AlienEntity(Game g, String r, int newX, int newY) {
+  public AlienEntity(Game g, String r, int newX, int newY, String t) {
     super(r, newX, newY);  // calls the constructor in Entity
     game = g;
     dx = -moveSpeed;  // start off moving left
+    alienType = t;
   } // constructor
 
   /* move
@@ -66,5 +69,19 @@ public class AlienEntity extends Entity {
    public void collidedWith(Entity other) {
      // collisions with aliens are handled in ShotEntity and ShipEntity
    } // collidedWith
+
+	/**
+	 * @return the alienType
+	 */
+	public String getAlienType() {
+		return alienType;
+	}
+	
+	/**
+	 * @param alienType the alienType to set
+	 */
+	public void setAlienType(String alienType) {
+		this.alienType = alienType;
+	}
    
 } // AlienEntity class
