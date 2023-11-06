@@ -6,9 +6,9 @@ import java.io.BufferedReader;
 
 
 public class TileManager {
-	Game gp;
-	Tile[] tile;
-	int mapTileNum[][];
+	private Game gp;
+	private Tile[] tile;
+	private int mapTileNum[][];
 	
 	public TileManager(Game gp) {
 		this.gp = gp;
@@ -24,19 +24,17 @@ public class TileManager {
 		
 		try {
 			tile[0] = new Tile();
-			tile[0].image = ImageIO.read(getClass().getResourceAsStream("/sprites/grass.png"));
+			tile[0].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/grass.png")));
 			tile[1] = new Tile();
-			tile[1].image = ImageIO.read(getClass().getResourceAsStream("/sprites/wall.png"));
+			tile[1].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/wall.png")));
 			tile[2] = new Tile();
-			tile[2].image = ImageIO.read(getClass().getResourceAsStream("/sprites/water.png"));
+			tile[2].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/water.png")));
 			tile[3] = new Tile();
-			tile[3].image = ImageIO.read(getClass().getResourceAsStream("/sprites/earth.png"));
+			tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/earth.png")));
 			tile[4] = new Tile();
-			tile[4].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tree.png"));
+			tile[4].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/tree.png")));
 			tile[5] = new Tile();
-			tile[5].image = ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png"));
-			tile[6] = new Tile();
-			tile[6].image = ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png"));
+			tile[5].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png")));
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -103,7 +101,7 @@ public class TileManager {
 				worldY - gp.tileSize < ((ShipEntity) gp.ship).y + ((ShipEntity) gp.ship).screenY) {
 					
 				if (inCircle(circleX, circleY, screenX, screenY, r)) {
-					g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+					g2.drawImage(tile[tileNum].getImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
 				}
 			}
 			
@@ -134,9 +132,25 @@ public class TileManager {
         double distance = Math.sqrt((distX * distX) + (distY * distY));
 
         // if the distance is less than the radius, collision!
-        if (distance <= r) {
+        if (distance < r) {
             return true;
         }
         return false;
     }
+
+	public Tile[] getTile() {
+		return tile;
+	}
+
+	public void setTile(Tile[] tile) {
+		this.tile = tile;
+	}
+
+	public int[][] getMapTileNum() {
+		return mapTileNum;
+	}
+
+	public void setMapTileNum(int[][] mapTileNum) {
+		this.mapTileNum = mapTileNum;
+	}
 }

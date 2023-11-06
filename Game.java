@@ -247,10 +247,6 @@ public class Game extends Canvas {
                 sonarCenterY = ship.getY();
             } // if
             
-            if (clearPressed) {
-            	clear = !clear;
-            }
-            
            	tileM.draw(520 - loopCount / 2 - (ship.getX() - sonarCenterX), 520 - loopCount / 2 - (ship.getY() - sonarCenterY), (Graphics2D)g, (double)loopCount * 2, clear);
 
             if (sonarFired) {
@@ -264,10 +260,14 @@ public class Game extends Canvas {
                         }
                     }
                 }
+                
                 if (loopCount * 4 >= firingInterval) {
                     sonarFired = false;
-                    loopCount = 0;
                 }
+            }
+            
+            if (clearPressed) {
+            	loopCount = 0;
             }
 
             // draw all entities
