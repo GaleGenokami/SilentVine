@@ -101,19 +101,27 @@ public class TileManager {
 			screenX = worldX - gp.ship.getX() + ((ShipEntity) gp.ship).screenX;
 			screenY = worldY - gp.ship.getY() + ((ShipEntity) gp.ship).screenY;
 			
-			if( worldX + gp.tileSize > ((ShipEntity) gp.ship).x - ((ShipEntity) gp.ship).screenX && 
-				worldX - gp.tileSize < ((ShipEntity) gp.ship).x + ((ShipEntity) gp.ship).screenX && 
-				worldY + gp.tileSize > ((ShipEntity) gp.ship).y - ((ShipEntity) gp.ship).screenY && 
-				worldY - gp.tileSize < ((ShipEntity) gp.ship).y + ((ShipEntity) gp.ship).screenY) {
-				
-				
-				if (inCircle(circleX, circleY, screenX, screenY, r)) {
-					g2.drawImage(tile[tileNum].getImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
+			
+			
+				if( worldX + gp.tileSize > ((ShipEntity) gp.ship).x - ((ShipEntity) gp.ship).screenX && 
+					worldX - gp.tileSize < ((ShipEntity) gp.ship).x + ((ShipEntity) gp.ship).screenX && 
+					worldY + gp.tileSize > ((ShipEntity) gp.ship).y - ((ShipEntity) gp.ship).screenY && 
+					worldY - gp.tileSize < ((ShipEntity) gp.ship).y + ((ShipEntity) gp.ship).screenY) {
 					
-				}
+					for (int i = 0; i < gp.getEntities().size(); i++) {
+						if (inCircle(circleX, circleY, screenX, screenY, r)) {
+							g2.drawImage(tile[tileNum].getImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
+							
+						}
+						if (gp.getEntities().get(i) instanceof AlienEntity) {
+							if (((Entity) gp.getEntities().get(i)).collidesWith(((AlienEntity) gp.getEntities().get(i)).screenX, ((AlienEntity) gp.getEntities().get(i)).screenY, screenX, screenY, gp)) {
+								g2.drawImage(tile[tileNum].getImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
+							}
+						}
+						
 					
-				
-			}
+					}
+				}	
 			
 			worldCol++;
 			

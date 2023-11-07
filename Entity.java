@@ -95,20 +95,31 @@
       * purpose: check if this entity collides with the other.
       */
      public boolean collidesWith(Entity other, Game g) {
-    	 if (this instanceof TileEntity) {
-    		 me.setBounds((int)x, (int)y, g.tileSize, g.tileSize);
-    	 } else {
-    		 me.setBounds((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
-    	 }
-    	 
-    	 if (other instanceof TileEntity) {
-    		 him.setBounds((int)x, (int)y, g.tileSize, g.tileSize);
-    	 } else {
-    		 him.setBounds(other.getX(), other.getY(), 
-                     other.sprite.getWidth(), other.sprite.getHeight());
-    	 }
-       
-       
+    	if (this instanceof AlienEntity) {
+    		me.setBounds((int)this.getScreenX(), (int)this.getScreenY(), sprite.getWidth(), sprite.getHeight());
+    	} else {
+    		me.setBounds((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
+    	}
+    	
+    	if (other instanceof ShipEntity) {
+    		him.setBounds(other.getScreenX(), other.getScreenY(), 
+                    other.sprite.getWidth(), other.sprite.getHeight());
+    	} else {
+    		him.setBounds(other.getX(), other.getY(), 
+                    other.sprite.getWidth(), other.sprite.getHeight());
+    	}
+    	
+       return me.intersects(him);
+     } // collidesWith
+     
+	protected abstract int getScreenX();
+	
+	protected abstract int getScreenY();
+
+	public boolean collidesWith(int alienX, int alienY, int tileX, int tileY, Game g) {
+    	me.setBounds((int)alienX, (int)alienY, sprite.getWidth(), sprite.getHeight());
+    	him.setBounds(tileX, tileY, 
+                     g.tileSize, g.tileSize);
        return me.intersects(him);
      } // collidesWith
      

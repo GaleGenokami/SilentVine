@@ -11,10 +11,20 @@ public class TileEntity extends Entity{
 
 	@Override
 	public void collidedWith(Entity other) {
-		if (other instanceof AlienEntity) {
-			
-	    } // if
 		
+		
+	}
+
+	@Override
+	protected int getScreenX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected int getScreenY() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

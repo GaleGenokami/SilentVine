@@ -31,7 +31,7 @@ public class Game extends Canvas {
         private ArrayList removeEntities = new ArrayList(); // list of entities
                                                             // to remove this loop
         public Entity ship;  // the ship
-        private double moveSpeed = 2000; // hor. vel. of ship (px/s)
+        private double moveSpeed = 500; // hor. vel. of ship (px/s)
         private long shipLastFire = 0; // time last shot fired
         private long firingInterval = 750; // interval between shots (ms)
         private int alienCount; // # of aliens left on screen

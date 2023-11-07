@@ -65,4 +65,16 @@ public class ShipEntity extends Entity {
      } // if
    } // collidedWith    
 
+@Override
+protected int getScreenX() {
+	// TODO Auto-generated method stub
+	return screenX;
+}
+
+@Override
+protected int getScreenY() {
+	// TODO Auto-generated method stub
+	return screenY;
+}
+
 } // ShipEntity class

@@ -59,4 +59,16 @@ public class ShotEntity extends Entity {
 
    } // collidedWith
 
+@Override
+protected int getScreenX() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+protected int getScreenY() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
 } // ShipEntity class

@@ -1,3 +1,5 @@
+import java.awt.Graphics;
+
 /* AlienEntity.java
  * March 27, 2006
  * Represents one of the aliens
@@ -9,7 +11,9 @@ public class AlienEntity extends Entity {
   private Game game; // the game in which the alien exists
   
   private String alienType = "";
-
+  protected int screenX;   // current camera x location
+  protected int screenY;   // current camera y location
+  
   /* construct a new alien
    * input: game - the game in which the alien is being created
    *        r - the image representing the alien
@@ -20,6 +24,9 @@ public class AlienEntity extends Entity {
     game = g;
     dx = -moveSpeed;  // start off moving left
     alienType = t;
+    screenX = newX;
+    screenY = newY;
+    
   } // constructor
 
   /* move
@@ -41,9 +48,14 @@ public class AlienEntity extends Entity {
     } // if
     
     // proceed with normal move
-    super.move(delta);
+ // update location of entity based on move speeds
+    screenX += (delta * dx) / 1000;
+    screenY += (delta * dy) / 1000;
   } // move
-
+  
+  public void draw(Graphics g) {
+	  sprite.draw(g, screenX, screenY);
+  }
 
   /* doLogic
    * Updates the game logic related to the aliens,
@@ -82,6 +94,34 @@ public class AlienEntity extends Entity {
 	 */
 	public void setAlienType(String alienType) {
 		this.alienType = alienType;
+	}
+
+	/**
+	 * @return the screenX
+	 */
+	public int getScreenX() {
+		return screenX;
+	}
+
+	/**
+	 * @param screenX the screenX to set
+	 */
+	public void setScreenX(int screenX) {
+		this.screenX = screenX;
+	}
+
+	/**
+	 * @return the screenY
+	 */
+	public int getScreenY() {
+		return screenY;
+	}
+
+	/**
+	 * @param screenY the screenY to set
+	 */
+	public void setScreenY(int screenY) {
+		this.screenY = screenY;
 	}
    
 } // AlienEntity class
