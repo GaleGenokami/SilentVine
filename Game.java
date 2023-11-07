@@ -241,11 +241,9 @@ public class Game extends Canvas {
             if (!waitingForKeyPress) {
               for (int i = 0; i < entities.size(); i++) {
                 Entity entity = (Entity) entities.get(i);
-                if (entity instanceof AlienEntity) {
-                	entity.move(0);
-                } else {
-                	entity.move(delta);
-                }
+                
+                entity.move(delta);
+                
               } // for
             } // if
             
@@ -266,7 +264,7 @@ public class Game extends Canvas {
                 for (int i = 0; i < entities.size(); i++) {
                     if (entities.get(i) instanceof AlienEntity) {
                         if (((AlienEntity) entities.get(i)).inCircle(520 - loopCount / 2 - (ship.getX() - sonarCenterX), 520 - loopCount / 2 - (ship.getY() - sonarCenterY), loopCount * 2)) {
-                            ((Entity) entities.get(i)).setSprite(("alienDetected.png"));
+                            ((Entity) entities.get(i)).setSprite(("sprites/alienDetected.gif"));
                         }
                     }
                 }
@@ -283,7 +281,10 @@ public class Game extends Canvas {
             // draw all entities
             for (int i = 0; i < entities.size(); i++) {
                Entity entity = (Entity) entities.get(i);
-               entity.draw(g);
+               if (!(entities.get(i) instanceof TileEntity)) {
+            	   entity.draw(g);
+               }
+               
             } // for
 
             // brute force collisions, compare every entity
@@ -295,7 +296,7 @@ public class Game extends Canvas {
                 Entity me = (Entity)entities.get(i);
                 Entity him = (Entity)entities.get(j);
 
-                if (me.collidesWith(him)) {
+                if (me.collidesWith(him, this)) {
                   me.collidedWith(him);
                   him.collidedWith(me);
                 } // if
@@ -332,22 +333,34 @@ public class Game extends Canvas {
             // ship should not move without user input
             ship.setHorizontalMovement(0);
             ship.setVerticalMovement(0);
-
-            // respond to user moving ship
-            if ((leftPressed) && (!rightPressed)) {
-              ship.setHorizontalMovement(-moveSpeed);
-            } else if ((rightPressed) && (!leftPressed)) {
-              ship.setHorizontalMovement(moveSpeed);
-            } // else
-            
-            if ((upPressed) && (!downPressed)) {
-                ship.setVerticalMovement(-moveSpeed);
-            } else if ((downPressed) && (!upPressed)) {
-                ship.setVerticalMovement(moveSpeed);
-            } // else
-
             
 
+            for (int i = 0; i < entities.size(); i++) {
+            	if (entities.get(i) instanceof AlienEntity) {
+            		((Entity) entities.get(i)).setHorizontalMovement(0);
+		            ((Entity) entities.get(i)).setVerticalMovement(0);
+            		
+	            	// respond to user moving ship
+		            if ((leftPressed) && (!rightPressed)) {
+		              ship.setHorizontalMovement(-moveSpeed);
+		              ((Entity) entities.get(i)).setHorizontalMovement(moveSpeed);
+		            } else if ((rightPressed) && (!leftPressed)) {
+		              ship.setHorizontalMovement(moveSpeed);
+		              ((Entity) entities.get(i)).setHorizontalMovement(-moveSpeed);
+		            } // else
+		            
+		            if ((upPressed) && (!downPressed)) {
+		                ship.setVerticalMovement(-moveSpeed);
+		                ((Entity) entities.get(i)).setVerticalMovement(moveSpeed);
+		            } else if ((downPressed) && (!upPressed)) {
+		                ship.setVerticalMovement(moveSpeed);
+		                ((Entity) entities.get(i)).setVerticalMovement(-moveSpeed);
+		            } // else
+		         
+		            
+            	}
+            }
+            
             // pause
             try { Thread.sleep(10); } catch (Exception e) {}
 
@@ -486,4 +499,18 @@ public class Game extends Canvas {
         // instantiate this object
 		new Game();
 	} // main
+
+	public void addEntities(Entity entity) {
+		entities.add(entity);
+	}
+
+
+	public ArrayList getEntities() {
+		return entities;
+	}
+
+
+	public void setEntities(ArrayList entities) {
+		this.entities = entities;
+	}
 } // Game

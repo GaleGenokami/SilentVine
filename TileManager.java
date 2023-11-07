@@ -25,16 +25,22 @@ public class TileManager {
 		try {
 			tile[0] = new TileType();
 			tile[0].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/grass.png")));
+			tile[0].setImageString("sprites/grass.png");
 			tile[1] = new TileType();
 			tile[1].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/wall.png")));
+			tile[1].setImageString("sprites/wall.png");
 			tile[2] = new TileType();
 			tile[2].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/water.png")));
+			tile[2].setImageString("sprites/water.png");
 			tile[3] = new TileType();
 			tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/earth.png")));
+			tile[3].setImageString("sprites/earth.png");
 			tile[4] = new TileType();
 			tile[4].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/tree.png")));
+			tile[4].setImageString("sprites/tree.png");
 			tile[5] = new TileType();
 			tile[5].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png")));
+			tile[5].setImageString("sprites/sand.png");
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -99,10 +105,14 @@ public class TileManager {
 				worldX - gp.tileSize < ((ShipEntity) gp.ship).x + ((ShipEntity) gp.ship).screenX && 
 				worldY + gp.tileSize > ((ShipEntity) gp.ship).y - ((ShipEntity) gp.ship).screenY && 
 				worldY - gp.tileSize < ((ShipEntity) gp.ship).y + ((ShipEntity) gp.ship).screenY) {
-					
+				
+				
 				if (inCircle(circleX, circleY, screenX, screenY, r)) {
 					g2.drawImage(tile[tileNum].getImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
+					
 				}
+					
+				
 			}
 			
 			worldCol++;

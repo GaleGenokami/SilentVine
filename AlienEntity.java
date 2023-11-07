@@ -4,7 +4,7 @@
  */
 public class AlienEntity extends Entity {
 
-  private double moveSpeed = 75; // horizontal speed
+  private double moveSpeed = 0; // horizontal speed
 
   private Game game; // the game in which the alien exists
   

@@ -94,10 +94,21 @@
       * output: true if entities collide
       * purpose: check if this entity collides with the other.
       */
-     public boolean collidesWith(Entity other) {
-       me.setBounds((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
-       him.setBounds(other.getX(), other.getY(), 
+     public boolean collidesWith(Entity other, Game g) {
+    	 if (this instanceof TileEntity) {
+    		 me.setBounds((int)x, (int)y, g.tileSize, g.tileSize);
+    	 } else {
+    		 me.setBounds((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
+    	 }
+    	 
+    	 if (other instanceof TileEntity) {
+    		 him.setBounds((int)x, (int)y, g.tileSize, g.tileSize);
+    	 } else {
+    		 him.setBounds(other.getX(), other.getY(), 
                      other.sprite.getWidth(), other.sprite.getHeight());
+    	 }
+       
+       
        return me.intersects(him);
      } // collidesWith
      
