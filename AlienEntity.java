@@ -11,8 +11,8 @@ public class AlienEntity extends Entity {
   private Game game; // the game in which the alien exists
   
   private String alienType = "";
-  protected int screenX;   // current camera x location
-  protected int screenY;   // current camera y location
+  protected double screenX;   // current camera x location
+  protected double screenY;   // current camera y location
   
   /* construct a new alien
    * input: game - the game in which the alien is being created
@@ -54,7 +54,7 @@ public class AlienEntity extends Entity {
   } // move
   
   public void draw(Graphics g) {
-	  sprite.draw(g, screenX, screenY);
+	  sprite.draw(g, (int)screenX, (int)screenY);
   }
 
   /* doLogic
@@ -100,7 +100,7 @@ public class AlienEntity extends Entity {
 	 * @return the screenX
 	 */
 	public int getScreenX() {
-		return screenX;
+		return (int) screenX;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class AlienEntity extends Entity {
 	 * @return the screenY
 	 */
 	public int getScreenY() {
-		return screenY;
+		return (int) screenY;
 	}
 
 	/**

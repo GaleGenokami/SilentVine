@@ -95,15 +95,16 @@
       * purpose: check if this entity collides with the other.
       */
      public boolean collidesWith(Entity other, Game g) {
-    	if (this instanceof AlienEntity) {
-    		me.setBounds((int)this.getScreenX(), (int)this.getScreenY(), sprite.getWidth(), sprite.getHeight());
+    	if (this instanceof AlienEntity || this instanceof ShipEntity) {
+    		me.setBounds(this.getScreenX(), this.getScreenY(), sprite.getWidth(), sprite.getHeight());
     	} else {
     		me.setBounds((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
     	}
     	
-    	if (other instanceof ShipEntity) {
+    	if (other instanceof ShipEntity || other instanceof AlienEntity) {
     		him.setBounds(other.getScreenX(), other.getScreenY(), 
                     other.sprite.getWidth(), other.sprite.getHeight());
+    		
     	} else {
     		him.setBounds(other.getX(), other.getY(), 
                     other.sprite.getWidth(), other.sprite.getHeight());
@@ -116,7 +117,7 @@
 	
 	protected abstract int getScreenY();
 
-	public boolean collidesWith(int alienX, int alienY, int tileX, int tileY, Game g) {
+	public boolean collidesWith(double alienX, double alienY, int tileX, int tileY, Game g) {
     	me.setBounds((int)alienX, (int)alienY, sprite.getWidth(), sprite.getHeight());
     	him.setBounds(tileX, tileY, 
                      g.tileSize, g.tileSize);

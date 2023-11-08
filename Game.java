@@ -281,9 +281,9 @@ public class Game extends Canvas {
             // draw all entities
             for (int i = 0; i < entities.size(); i++) {
                Entity entity = (Entity) entities.get(i);
-               if (!(entities.get(i) instanceof TileEntity)) {
-            	   entity.draw(g);
-               }
+               
+               entity.draw(g);
+               
                
             } // for
 
@@ -295,7 +295,7 @@ public class Game extends Canvas {
              for (int j = i + 1; j < entities.size(); j++) {
                 Entity me = (Entity)entities.get(i);
                 Entity him = (Entity)entities.get(j);
-
+                
                 if (me.collidesWith(him, this)) {
                   me.collidedWith(him);
                   him.collidedWith(me);
