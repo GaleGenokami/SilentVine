@@ -4,7 +4,7 @@
  */
  
  import java.awt.*;
-
+ 
  public abstract class Entity {
 
     // Java Note: the visibility modifier "protected"
@@ -18,11 +18,12 @@
     protected Sprite sprite; // this entity's sprite
     protected double dx; // horizontal speed (px/s)  + -> right
     protected double dy; // vertical speed (px/s) + -> down
-    
     private Rectangle me = new Rectangle(); // bounding rectangle of
                                             // this entity
     private Rectangle him = new Rectangle(); // bounding rect. of other
                                              // entities
+    public Rectangle solidArea;
+	CollisionChecker cChecker;
                                              
     /* Constructor
      * input: reference to the image for this entity,
@@ -34,15 +35,11 @@
        sprite = (SpriteStore.get()).getSprite(r);
        
      } // constructor
-     
-     public void setSprite(String r) {
-    	 sprite = (SpriteStore.get()).getSprite(r);
-     }
 
      /* move
       * input: delta - the amount of time passed in ms
       * output: none
-      * purpose: after a certain amount of time has passed,
+      * purpose: after a certain amout of time has passed,
       *          update the location
       */
      public void move(long delta) {
@@ -58,6 +55,15 @@
 
      public void setVerticalMovement(double newDY) {
        dy = newDY;
+     } // setVerticalMovement
+     
+  // get and set velocities
+     public void addHorizontalMovement(double newDX) {
+       dx += newDX;
+     } // setHorizontalMovement
+
+     public void addVerticalMovement(double newDY) {
+       dy += newDY;
      } // setVerticalMovement
 
      public double getHorizontalMovement() {
@@ -94,35 +100,35 @@
       * output: true if entities collide
       * purpose: check if this entity collides with the other.
       */
-     public boolean collidesWith(Entity other, Game g) {
-    	if (this instanceof AlienEntity || this instanceof ShipEntity) {
-    		me.setBounds(this.getScreenX(), this.getScreenY(), sprite.getWidth(), sprite.getHeight());
-    	} else {
-    		me.setBounds((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
-    	}
-    	
-    	if (other instanceof ShipEntity || other instanceof AlienEntity) {
-    		him.setBounds(other.getScreenX(), other.getScreenY(), 
-                    other.sprite.getWidth(), other.sprite.getHeight());
-    		
-    	} else {
-    		him.setBounds(other.getX(), other.getY(), 
-                    other.sprite.getWidth(), other.sprite.getHeight());
-    	}
-    	
-       return me.intersects(him);
-     } // collidesWith
-     
-	protected abstract int getScreenX();
-	
-	protected abstract int getScreenY();
+     public boolean collidesWith(Entity other) {
+     	if (this instanceof AlienEntity || this instanceof ShipEntity) {
+     		me.setBounds(this.getScreenX(), this.getScreenY(), sprite.getWidth(), sprite.getHeight());
+     	} else {
+     		me.setBounds((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
+     	}
+     	
+     	if (other instanceof ShipEntity || other instanceof AlienEntity) {
+     		him.setBounds(other.getScreenX(), other.getScreenY(), 
+                     other.sprite.getWidth(), other.sprite.getHeight());
+     		
+     	} else {
+     		him.setBounds(other.getX(), other.getY(), 
+                     other.sprite.getWidth(), other.sprite.getHeight());
+     	}
+     	
+        return me.intersects(him);
+      } // collidesWith
+      
+ 	protected abstract int getScreenX();
+ 	
+ 	protected abstract int getScreenY();
 
-	public boolean collidesWith(double alienX, double alienY, int tileX, int tileY, Game g) {
-    	me.setBounds((int)alienX, (int)alienY, sprite.getWidth(), sprite.getHeight());
-    	him.setBounds(tileX, tileY, 
-                     g.tileSize, g.tileSize);
-       return me.intersects(him);
-     } // collidesWith
+ 	public boolean collidesWith(double alienX, double alienY, int tileX, int tileY, Game g) {
+     	me.setBounds((int)alienX, (int)alienY, sprite.getWidth(), sprite.getHeight());
+     	him.setBounds(tileX, tileY, 
+                      g.tileSize, g.tileSize);
+        return me.intersects(him);
+      } // collidesWith
      
      /* collidedWith
       * input: the entity with which this has collided
@@ -131,8 +137,6 @@
       *       that extends this class
       */
       public abstract void collidedWith(Entity other);
-      
-
       
       public boolean inCircle(double x, double y, double r) {
           // temporary variables to set edges for testing
@@ -156,5 +160,14 @@
           }
           return false;
       }
+
+      public void setSprite(String r) {
+     	 sprite = (SpriteStore.get()).getSprite(r);
+      }
+
+	public void checkCollision(long delta) {
+		// TODO Auto-generated method stub
+		
+	}
 
  } // Entity class

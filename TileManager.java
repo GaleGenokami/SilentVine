@@ -6,15 +6,22 @@ import java.io.BufferedReader;
 
 
 public class TileManager {
-	private Game gp;
-	private TileType[] tile;
-	private int mapTileNum[][];
+	Game gp;
+	Tile[] tile;
+	int mapTileNum[][];
+	boolean mapVisibility[][];
 	
 	public TileManager(Game gp) {
 		this.gp = gp;
 		
-		tile = new TileType[10];
+		tile = new Tile[10];
 		mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+		mapVisibility = new boolean[gp.maxWorldCol][gp.maxWorldRow];
+		for(int i = 0; i < mapVisibility.length; i++) {
+			for(int j = 0; j < mapVisibility[i].length; j++) {
+				mapVisibility[i][j] = false;
+			}
+		}
 		
 		getTileImage();
 		loadMap();
@@ -23,25 +30,49 @@ public class TileManager {
 	public void getTileImage() {
 		
 		try {
-			tile[0] = new TileType();
-			tile[0].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/grass.png")));
-			tile[0].setImageString("sprites/grass.png");
-			tile[1] = new TileType();
-			tile[1].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/wall.png")));
-			tile[1].setImageString("sprites/wall.png");
-			tile[2] = new TileType();
-			tile[2].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/water.png")));
-			tile[2].setImageString("sprites/water.png");
-			tile[3] = new TileType();
-			tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/earth.png")));
-			tile[3].setImageString("sprites/earth.png");
-			tile[4] = new TileType();
-			tile[4].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/tree.png")));
-			tile[4].setImageString("sprites/tree.png");
-			tile[5] = new TileType();
-			tile[5].setImage(ImageIO.read(getClass().getResourceAsStream("/sprites/sand.png")));
-			tile[5].setImageString("sprites/sand.png");
+			tile[0] = new Tile();
+			tile[0].image = ImageIO.read(getClass().getResourceAsStream("/sprites/0.png"));
+			
+			tile[1] = new Tile();
+			tile[1].image = ImageIO.read(getClass().getResourceAsStream("/sprites/1.png"));
+			tile[1].collision = true;
+			
+			tile[2] = new Tile();
+			tile[2].image = ImageIO.read(getClass().getResourceAsStream("/sprites/2.png"));
+			tile[2].collision = true;
+			
+			tile[3] = new Tile();
+			tile[3].image = ImageIO.read(getClass().getResourceAsStream("/sprites/3.png"));
+			tile[3].collision = true;
+			
+			tile[4] = new Tile();
+			tile[4].image = ImageIO.read(getClass().getResourceAsStream("/sprites/4.png"));
+			tile[4].collision = true;
+			
+			tile[5] = new Tile();
+			tile[5].image = ImageIO.read(getClass().getResourceAsStream("/sprites/5.png"));
+			tile[5].collision = true;
+			
+			tile[6] = new Tile();
+			tile[6].image = ImageIO.read(getClass().getResourceAsStream("/sprites/6.png"));
+			tile[6].collision = true;
+			
+			tile[7] = new Tile();
+			tile[7].image = ImageIO.read(getClass().getResourceAsStream("/sprites/7.png"));
+			tile[7].collision = true;
+			
+			tile[8] = new Tile();
+			tile[8].image = ImageIO.read(getClass().getResourceAsStream("/sprites/8.png"));
+			tile[8].collision = true;
+			
+			tile[9] = new Tile();
+			tile[9].image = ImageIO.read(getClass().getResourceAsStream("/sprites/9.png"));
+			tile[9].collision = true;
+			
+			
+			
 		}catch(Exception e) {
+			
 			e.printStackTrace();
 		}
 	}
@@ -58,9 +89,8 @@ public class TileManager {
 				String line = br.readLine();
 				
 				while(col < gp.maxWorldCol) {
-					String numbers[] = line.split(" ");
 					
-					int num = Integer.parseInt(numbers[col]);
+					int num = line.charAt(col) - '0';
 					
 					mapTileNum[col][row] = num;
 					col++;
@@ -79,7 +109,7 @@ public class TileManager {
 		}
 	}
 	
-	public void draw(double circleX, double circleY, Graphics2D g2, double r, boolean clear) {
+	public void draw(double circleX, double circleY, double r, Graphics2D g2) {
 		
 		int worldCol = 0;
 		int worldRow = 0;
@@ -89,39 +119,26 @@ public class TileManager {
 		int screenX = 0;
 		int screenY = 0;
 		
+		
 		while(worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
-			if (clear == true) {
-				tileNum = 6;
-			} else {
-				tileNum = mapTileNum[worldCol][worldRow];
-			}
-			
+			tileNum = mapTileNum[worldCol][worldRow];
 			worldX = worldCol * gp.tileSize;
 			worldY = worldRow * gp.tileSize;
 			screenX = worldX - gp.ship.getX() + ((ShipEntity) gp.ship).screenX;
 			screenY = worldY - gp.ship.getY() + ((ShipEntity) gp.ship).screenY;
 			
+			if(inCircle(circleX, circleY, screenX, screenY, r)) {
+				mapVisibility[worldCol][worldRow] = true;
+			}
 			
-			
-				if( worldX + gp.tileSize > ((ShipEntity) gp.ship).x - ((ShipEntity) gp.ship).screenX && 
-					worldX - gp.tileSize < ((ShipEntity) gp.ship).x + ((ShipEntity) gp.ship).screenX && 
-					worldY + gp.tileSize > ((ShipEntity) gp.ship).y - ((ShipEntity) gp.ship).screenY && 
-					worldY - gp.tileSize < ((ShipEntity) gp.ship).y + ((ShipEntity) gp.ship).screenY) {
-					
-					for (int i = 0; i < gp.getEntities().size(); i++) {
-						if (inCircle(circleX, circleY, screenX, screenY, r)) {
-							g2.drawImage(tile[tileNum].getImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
-							
-						}
-						if (gp.getEntities().get(i) instanceof AlienEntity) {
-							if (((Entity) gp.getEntities().get(i)).collidesWith(((AlienEntity) gp.getEntities().get(i)).screenX, ((AlienEntity) gp.getEntities().get(i)).screenY, screenX, screenY, gp)) {
-								g2.drawImage(tile[tileNum].getImage(), screenX, screenY, gp.tileSize, gp.tileSize, null);
-							}
-						}
-						
-					
-					}
-				}	
+			if( worldX + gp.tileSize > ((ShipEntity) gp.ship).x - ((ShipEntity) gp.ship).screenX && 
+				worldX - gp.tileSize < ((ShipEntity) gp.ship).x + ((ShipEntity) gp.ship).screenX && 
+				worldY + gp.tileSize > ((ShipEntity) gp.ship).y - ((ShipEntity) gp.ship).screenY && 
+				worldY - gp.tileSize < ((ShipEntity) gp.ship).y + ((ShipEntity) gp.ship).screenY && 
+				mapVisibility[worldCol][worldRow]) {
+				
+				g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+			}
 			
 			worldCol++;
 			
@@ -129,6 +146,7 @@ public class TileManager {
 				worldCol = 0;
 				worldRow++;
 			}
+			
 		}
 	
 	}
@@ -155,20 +173,4 @@ public class TileManager {
         }
         return false;
     }
-
-	public TileType[] getTile() {
-		return tile;
-	}
-
-	public void setTile(TileType[] tile) {
-		this.tile = tile;
-	}
-
-	public int[][] getMapTileNum() {
-		return mapTileNum;
-	}
-
-	public void setMapTileNum(int[][] mapTileNum) {
-		this.mapTileNum = mapTileNum;
-	}
 }
