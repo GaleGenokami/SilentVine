@@ -26,10 +26,10 @@ public class ShipEntity extends Entity {
 	    game = g;
 	    cChecker = new CollisionChecker(game);
 	    
-	    screenX = game.screenWidth/2 - game.tileSize/2;
-	    screenY = game.screenHeight/2 - game.tileSize/2;
+	    screenX = game.getScreenWidth()/2 - game.getTileSize()/2;
+	    screenY = game.getScreenHeight()/2 - game.getTileSize()/2;
 	    
-	    solidArea = new Rectangle(0, 0, game.tileSize/2, game.tileSize/2);
+	    solidArea = new Rectangle(0, 0, game.getTileSize()/2, game.getTileSize()/2);
   } // constructor
 
   /* move
@@ -42,7 +42,7 @@ public class ShipEntity extends Entity {
 	      return;
 	    } // if
 	    // stop at right side of screen
-	    if ((dx > 0) && (x > game.worldWidth - 50)) {
+	    if ((dx > 0) && (x > game.getWorldWidth() - 50)) {
 	      return;
 	    } // if
 	    
@@ -50,7 +50,7 @@ public class ShipEntity extends Entity {
 	        return;
 	    } // if
 	      // stop at right side of screen
-	    if ((dy > 0) && (y > game.worldHeight - 50)) {
+	    if ((dy > 0) && (y > game.getWorldHeight() - 50)) {
 	        return;
 	    } // if
 	    
@@ -60,7 +60,9 @@ public class ShipEntity extends Entity {
   } // move
   
   public void checkCollision(long delta) {
-	  cChecker.checkTile(this, delta);
+	  
+	cChecker.checkTile(this, delta);
+		
   }
   
   public void draw(Graphics g) {
@@ -74,10 +76,13 @@ public class ShipEntity extends Entity {
    *          with something
    */
    public void collidedWith(Entity other) {
-     //if (other instanceof AlienEntity) {
+     if (other instanceof AlienEntity) {
     	
-       // game.notifyDeath();
-     //} // if
+        game.setEnergy(game.getEnergy() - 0.4);
+        if (game.getEnergy() <= 0) {
+        	game.notifyDeath();
+        }
+     } // if
    } // collidedWith    
 
    @Override

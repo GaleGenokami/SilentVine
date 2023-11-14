@@ -24,9 +24,10 @@ public class Game extends Canvas {
         private boolean gameRunning = true;
         private ArrayList entities = new ArrayList(); // list of entities
                                                       // in game
+        private ArrayList <Entity> alienEntities = new ArrayList(); // list of alien entities
         private ArrayList removeEntities = new ArrayList(); // list of entities
                                                             // to remove this loop
-        public Entity ship;  // the ship
+        private Entity ship;  // the ship
         private double moveSpeed = 250; // hor. vel. of ship (px/s)
         private long lastFire = 0; // time last shot fired
         private long firingInterval = 3000; // interval between shots (ms)
@@ -39,7 +40,7 @@ public class Game extends Canvas {
                                                        // needs to be 
                                                        // applied this loop
         
-        private int energy = 930;
+        private double energy = 930;
         private boolean playerVisible = false;
         
         private boolean sonarOn = false;
@@ -51,20 +52,20 @@ public class Game extends Canvas {
         private int sonarCenterX = 0;
         private int sonarCenterY = 0;
 
-        public int tileSize = 72;
+        private int tileSize = 72;
         
-        public int screenWidth = 1080;
-        public int screenHeight = 1008;
-        public int maxScreenCol = 15;
-        public int maxScreenRow = 15;
+        private int screenWidth = 1080;
+        private int screenHeight = 1008;
+        private int maxScreenCol = 15;
+        private int maxScreenRow = 15;
         
-        public int maxWorldCol = 200;
-        public int maxWorldRow = 100;
-        public int worldWidth = tileSize * maxWorldCol;
-        public int worldHeight = tileSize * maxWorldRow;
+        private int maxWorldCol = 200;
+        private int maxWorldRow = 100;
+        private int worldWidth = tileSize * maxWorldCol;
+        private int worldHeight = tileSize * maxWorldRow;
         
-        TileManager tileM = new TileManager(this);
-        double theta = 0;
+        private TileManager tileM = new TileManager(this);
+        private double theta = 0;
         
     	/*
     	 * Construct our game and set it running.
@@ -139,6 +140,7 @@ public class Game extends Canvas {
                       400 + (col * 10 * tileSize),
                       400 + (row * 10 * tileSize), "");
                   entities.add(alien);
+                  alienEntities.add(alien);
                   alienCount++;
                 } // for
               } // outer for
@@ -184,12 +186,10 @@ public class Game extends Canvas {
            } // if
            
            // speed up existing aliens
-           for (int i=0; i < entities.size(); i++) {
-             Entity entity = (Entity) entities.get(i);
-             if (entity instanceof AlienEntity) {
-               // speed up by 2%
-               entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
-             } // if
+           for (Entity alien: alienEntities) {
+             
+            alien.setHorizontalMovement(alien.getHorizontalMovement() * 1.02);
+             
            } // for
          } // notifyAlienKilled
 
@@ -238,7 +238,7 @@ public class Game extends Canvas {
             	if(tryToFire()) {
             		if(!playerVisible) {
             			playerVisible = true;
-            			ship.sprite.image = (SpriteStore.get()).getSprite("sprites/player.png").image;
+            			ship.sprite.setImage((SpriteStore.get()).getSprite("sprites/player.png").getImage());
             		}
             		energy -= 10;
             		sonarCenterX = ship.getX();
@@ -252,17 +252,15 @@ public class Game extends Canvas {
             g.setColor(Color.WHITE);
            	g.fillRect(40, 40, 25, 940);
             g.setColor(Color.GRAY);
-           	g.fillRect(45, 975 - energy, 15, energy);
+           	g.fillRect(45, 975 - (int)energy, 15, (int)energy);
            	
             if(sonarOn) {
             	loopCount++;
             	g.setColor(Color.WHITE);
             	g.drawOval(540 - loopCount * 2 - (ship.getX() - sonarCenterX), 500 - loopCount * 2 - (ship.getY() - sonarCenterY), loopCount * 4, loopCount * 4);
-            	for (int i = 0; i < entities.size(); i++) {
-                    if (entities.get(i) instanceof AlienEntity) {
-                        if (((AlienEntity) entities.get(i)).inCircle(540 - loopCount / 2 - (ship.getX() - sonarCenterX), 500 - loopCount / 2 - (ship.getY() - sonarCenterY), loopCount * 2)) {
-                            ((Entity) entities.get(i)).setSprite(("sprites/alienDetected.gif"));
-                        }
+            	for (Entity alien: alienEntities) {
+                    if (alien.inCircle(540 - loopCount / 2 - (ship.getX() - sonarCenterX), 500 - loopCount / 2 - (ship.getY() - sonarCenterY), loopCount * 2)) {
+                    	alien.setSprite(("sprites/alienDetected.gif"));
                     }
                 }
             	if(loopCount * 4 > 500) {
@@ -347,58 +345,48 @@ public class Game extends Canvas {
             ship.setVerticalMovement(0);
             walkOn = false;
 
-            for (int i = 0; i < entities.size(); i++) {
-            	if (entities.get(i) instanceof AlienEntity) {
-            		((Entity) entities.get(i)).setHorizontalMovement(0);
-		            ((Entity) entities.get(i)).setVerticalMovement(0);
-            		
-	            	// respond to user moving ship
-		            if ((leftPressed) && (!rightPressed)) {
-		              ship.setHorizontalMovement(-moveSpeed);
-		              walkOn = true;
-		              ((Entity) entities.get(i)).addHorizontalMovement(moveSpeed);
-		            } else if ((rightPressed) && (!leftPressed)) {
-		              ship.setHorizontalMovement(moveSpeed);
-		              walkOn = true;
-		              ((Entity) entities.get(i)).addHorizontalMovement(-moveSpeed);
-		            } // else
-		            
-		            if ((upPressed) && (!downPressed)) {
-		                ship.setVerticalMovement(-moveSpeed);
-		                walkOn = true;
-		                ((Entity) entities.get(i)).addVerticalMovement(moveSpeed);
-		            } else if ((downPressed) && (!upPressed)) {
-		                ship.setVerticalMovement(moveSpeed);
-		                walkOn = true;
-		                ((Entity) entities.get(i)).addVerticalMovement(-moveSpeed);
-		            } // else
-		         
-		            
-            	}
+            for (Entity alien: alienEntities) {
+            	alien.setHorizontalMovement(0);
+            	alien.setVerticalMovement(0);
+        		
+            	// respond to user moving ship
+	            if ((leftPressed) && (!rightPressed)) {
+	              ship.setHorizontalMovement(-moveSpeed);
+	              walkOn = true;
+	              alien.addHorizontalMovement(moveSpeed);
+	            } else if ((rightPressed) && (!leftPressed)) {
+	              ship.setHorizontalMovement(moveSpeed);
+	              walkOn = true;
+	              alien.addHorizontalMovement(-moveSpeed);
+	            } // else
+	            
+	            if ((upPressed) && (!downPressed)) {
+	                ship.setVerticalMovement(-moveSpeed);
+	                walkOn = true;
+	                alien.addVerticalMovement(moveSpeed);
+	            } else if ((downPressed) && (!upPressed)) {
+	                ship.setVerticalMovement(moveSpeed);
+	                walkOn = true;
+	                alien.addVerticalMovement(-moveSpeed);
+	            } // else
             }
             
     		ship.checkCollision(delta);
     		
             
-            /*// move alien (pathfinding)
-            for (int i = 0; i < entities.size(); i++) {
-            	if (entities.get(i) instanceof AlienEntity) {
-            		try {
-	            		theta = Math.abs(Math.atan((ship.getScreenY() - ((Entity) entities.get(i)).getScreenY()) / (ship.getScreenX() - ((Entity) entities.get(i)).getScreenX())));
-	            		((Entity) entities.get(i)).addHorizontalMovement((100 * Math.cos(theta)) * ((ship.getScreenX() - ((Entity) entities.get(i)).getScreenX() < 0) ? (-1) : (1)));
-	            		((Entity) entities.get(i)).addVerticalMovement((100 * Math.sin(theta)) * ((ship.getScreenY() - ((Entity) entities.get(i)).getScreenY() < 0) ? (-1) : (1)));
-	            		System.out.println((100 * Math.cos(theta)) * ((ship.getScreenX() - ((Entity) entities.get(i)).getScreenX() < 0) ? (-1) : (1)));
-	                    System.out.println((100 * Math.sin(theta)) * ((ship.getScreenY() - ((Entity) entities.get(i)).getScreenY() < 0) ? (-1) : (1)));
-            		} catch(Exception e) {
-            			((Entity) entities.get(i)).addVerticalMovement(100 * ((ship.getScreenY() - ((Entity) entities.get(i)).getScreenY() < 0) ? (-1) : (1)));
-            		}
+            // move alien (pathfinding)
+            for (Entity alien: alienEntities) {
+            	if (!alien.collidesWith(ship) || Math.sqrt(Math.pow((ship.getScreenY() - alien.getScreenY()), 2) + Math.pow((ship.getScreenX() - alien.getScreenX()), 2)) < 1500) {
+	        		try {
+	            		theta = Math.abs(Math.atan((ship.getScreenY() - alien.getScreenY()) / (ship.getScreenX() - alien.getScreenX())));
+	            		alien.addHorizontalMovement((100 * Math.cos(theta)) * ((ship.getScreenX() - alien.getScreenX() < 0) ? (-1) : (1)));
+	            		alien.addVerticalMovement((100 * Math.sin(theta)) * ((ship.getScreenY() - alien.getScreenY() < 0) ? (-1) : (1)));
+	        		} catch(Exception e) {
+	        			alien.addVerticalMovement(100 * ((ship.getScreenY() - alien.getScreenY() < 0) ? (-1) : (1)));
+	        		}
             	}
-            }*/
+            }
             
-            
-
-            
-
             // pause
             try { Thread.sleep(10); } catch (Exception e) {}
 
@@ -544,5 +532,215 @@ public class Game extends Canvas {
 
 	public void setEntities(ArrayList entities) {
 		this.entities = entities;
+	}
+
+
+	public ArrayList<Entity> getAlienEntities() {
+		return alienEntities;
+	}
+
+
+	public void setAlienEntities(ArrayList<Entity> alienEntities) {
+		this.alienEntities = alienEntities;
+	}
+
+
+	public double getEnergy() {
+		return energy;
+	}
+
+
+	public void setEnergy(double energy) {
+		this.energy = energy;
+	}
+
+
+	public boolean isUpPressed() {
+		return upPressed;
+	}
+
+
+	public void setUpPressed(boolean upPressed) {
+		this.upPressed = upPressed;
+	}
+
+
+	public ArrayList getRemoveEntities() {
+		return removeEntities;
+	}
+
+
+	public void setRemoveEntities(ArrayList removeEntities) {
+		this.removeEntities = removeEntities;
+	}
+
+
+	public Entity getShip() {
+		return ship;
+	}
+
+
+	public void setShip(Entity ship) {
+		this.ship = ship;
+	}
+
+
+	public double getMoveSpeed() {
+		return moveSpeed;
+	}
+
+
+	public void setMoveSpeed(double moveSpeed) {
+		this.moveSpeed = moveSpeed;
+	}
+
+
+	public long getFiringInterval() {
+		return firingInterval;
+	}
+
+
+	public void setFiringInterval(long firingInterval) {
+		this.firingInterval = firingInterval;
+	}
+
+
+	public int getAlienCount() {
+		return alienCount;
+	}
+
+
+	public void setAlienCount(int alienCount) {
+		this.alienCount = alienCount;
+	}
+
+
+	public boolean isPlayerVisible() {
+		return playerVisible;
+	}
+
+
+	public void setPlayerVisible(boolean playerVisible) {
+		this.playerVisible = playerVisible;
+	}
+
+
+	public boolean isWalkOn() {
+		return walkOn;
+	}
+
+
+	public void setWalkOn(boolean walkOn) {
+		this.walkOn = walkOn;
+	}
+
+
+	public int getWalkCount() {
+		return walkCount;
+	}
+
+
+	public void setWalkCount(int walkCount) {
+		this.walkCount = walkCount;
+	}
+
+
+	public int getTileSize() {
+		return tileSize;
+	}
+
+
+	public void setTileSize(int tileSize) {
+		this.tileSize = tileSize;
+	}
+
+
+	public int getMaxScreenCol() {
+		return maxScreenCol;
+	}
+
+
+	public void setMaxScreenCol(int maxScreenCol) {
+		this.maxScreenCol = maxScreenCol;
+	}
+
+
+	public int getMaxScreenRow() {
+		return maxScreenRow;
+	}
+
+
+	public void setMaxScreenRow(int maxScreenRow) {
+		this.maxScreenRow = maxScreenRow;
+	}
+
+
+	public int getMaxWorldCol() {
+		return maxWorldCol;
+	}
+
+
+	public void setMaxWorldCol(int maxWorldCol) {
+		this.maxWorldCol = maxWorldCol;
+	}
+
+
+	public int getMaxWorldRow() {
+		return maxWorldRow;
+	}
+
+
+	public void setMaxWorldRow(int maxWorldRow) {
+		this.maxWorldRow = maxWorldRow;
+	}
+
+
+	public int getWorldWidth() {
+		return worldWidth;
+	}
+
+
+	public void setWorldWidth(int worldWidth) {
+		this.worldWidth = worldWidth;
+	}
+
+
+	public int getWorldHeight() {
+		return worldHeight;
+	}
+
+
+	public void setWorldHeight(int worldHeight) {
+		this.worldHeight = worldHeight;
+	}
+
+
+	public TileManager getTileM() {
+		return tileM;
+	}
+
+
+	public void setTileM(TileManager tileM) {
+		this.tileM = tileM;
+	}
+
+
+	public int getScreenWidth() {
+		return screenWidth;
+	}
+
+
+	public void setScreenWidth(int screenWidth) {
+		this.screenWidth = screenWidth;
+	}
+
+
+	public int getScreenHeight() {
+		return screenHeight;
+	}
+
+
+	public void setScreenHeight(int screenHeight) {
+		this.screenHeight = screenHeight;
 	}
 } // Game

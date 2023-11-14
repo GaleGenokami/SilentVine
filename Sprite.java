@@ -10,7 +10,7 @@
  
  public class Sprite {
 
-   public Image image;  // the image to be drawn for this sprite
+   private Image image;  // the image to be drawn for this sprite
    
    // constructor
    public Sprite (Image i) {
@@ -31,5 +31,13 @@
    public void draw(Graphics g, int x, int y) {
       g.drawImage(image, x, y, null);
    } // draw
+
+public Image getImage() {
+	return image;
+}
+
+public void setImage(Image image) {
+	this.image = image;
+}
 
  } // Sprite

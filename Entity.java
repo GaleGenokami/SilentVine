@@ -126,7 +126,7 @@
  	public boolean collidesWith(double alienX, double alienY, int tileX, int tileY, Game g) {
      	me.setBounds((int)alienX, (int)alienY, sprite.getWidth(), sprite.getHeight());
      	him.setBounds(tileX, tileY, 
-                      g.tileSize, g.tileSize);
+                      g.getTileSize(), g.getTileSize());
         return me.intersects(him);
       } // collidesWith
      
