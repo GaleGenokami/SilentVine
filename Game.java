@@ -135,8 +135,8 @@ public class Game extends Canvas {
               // create a block of aliens (5x12)
               alienCount = 0;
               for (int row = 0; row < 2; row++) {
-                for (int col = 0; col < 1; col++) {
-                  Entity alien = new AlienEntity(this, "sprites/alien.gif", 
+                for (int col = 0; col < 2; col++) {
+                  Entity alien = new AlienEntity(this, "sprites/alien.png", 
                       400 + (col * 10 * tileSize),
                       400 + (row * 10 * tileSize), "");
                   entities.add(alien);
@@ -260,12 +260,15 @@ public class Game extends Canvas {
             	g.drawOval(540 - loopCount * 2 - (ship.getX() - sonarCenterX), 500 - loopCount * 2 - (ship.getY() - sonarCenterY), loopCount * 4, loopCount * 4);
             	for (Entity alien: alienEntities) {
                     if (alien.inCircle(540 - loopCount / 2 - (ship.getX() - sonarCenterX), 500 - loopCount / 2 - (ship.getY() - sonarCenterY), loopCount * 2)) {
-                    	alien.setSprite(("sprites/alienDetected.gif"));
+                    	alien.setSprite(("sprites/alienDetected.png"));
                     }
                 }
             	if(loopCount * 4 > 500) {
             		sonarOn = false;
             		loopCount = 0;
+            		for (Entity alien: alienEntities) {
+                        alien.setSprite(("sprites/alien.png"));
+                    }
             	}
             }
             
@@ -279,7 +282,21 @@ public class Game extends Canvas {
 
             walkCount--;
             
-            
+            // brute force collisions, compare every entity
+            // against every other entity.  If any collisions
+            // are detected notify both entities that it has
+            // occurred
+           for (int i = 0; i < entities.size(); i++) {
+             for (int j = i + 1; j < entities.size(); j++) {
+                Entity me = (Entity)entities.get(i);
+                Entity him = (Entity)entities.get(j);
+
+                if (me.collidesWith(him)) {
+                  me.collidedWith(him);
+                  him.collidedWith(me);
+                } // if
+             } // inner for
+           } // outer for
 
             // move each entity
             if (!waitingForKeyPress) {
@@ -297,21 +314,7 @@ public class Game extends Canvas {
             } // for
             
             
-            // brute force collisions, compare every entity
-            // against every other entity.  If any collisions
-            // are detected notify both entities that it has
-            // occurred
-           for (int i = 0; i < entities.size(); i++) {
-             for (int j = i + 1; j < entities.size(); j++) {
-                Entity me = (Entity)entities.get(i);
-                Entity him = (Entity)entities.get(j);
-
-                if (me.collidesWith(him)) {
-                  me.collidedWith(him);
-                  him.collidedWith(me);
-                } // if
-             } // inner for
-           } // outer for
+            
 
            // remove dead entities
            entities.removeAll(removeEntities);
@@ -375,16 +378,26 @@ public class Game extends Canvas {
     		
             
             // move alien (pathfinding)
-            for (Entity alien: alienEntities) {
-            	if (!alien.collidesWith(ship) || Math.sqrt(Math.pow((ship.getScreenY() - alien.getScreenY()), 2) + Math.pow((ship.getScreenX() - alien.getScreenX()), 2)) < 1500) {
+            for (int i = 0; i < alienEntities.size(); i++) {
+            	if (!alienEntities.get(i).collidesWith(ship) || Math.sqrt(Math.pow((ship.getScreenY() - alienEntities.get(i).getScreenY()), 2) + Math.pow((ship.getScreenX() - alienEntities.get(i).getScreenX()), 2)) < 1500) {
 	        		try {
-	            		theta = Math.abs(Math.atan((ship.getScreenY() - alien.getScreenY()) / (ship.getScreenX() - alien.getScreenX())));
-	            		alien.addHorizontalMovement((100 * Math.cos(theta)) * ((ship.getScreenX() - alien.getScreenX() < 0) ? (-1) : (1)));
-	            		alien.addVerticalMovement((100 * Math.sin(theta)) * ((ship.getScreenY() - alien.getScreenY() < 0) ? (-1) : (1)));
+	            		theta = Math.abs(Math.atan((ship.getScreenY() - alienEntities.get(i).getScreenY()) / (ship.getScreenX() - alienEntities.get(i).getScreenX())));
+	            		alienEntities.get(i).addHorizontalMovement((100 * Math.cos(theta)) * ((ship.getScreenX() - alienEntities.get(i).getScreenX() < 0) ? (-1) : (1)));
+	            		alienEntities.get(i).addVerticalMovement((100 * Math.sin(theta)) * ((ship.getScreenY() - alienEntities.get(i).getScreenY() < 0) ? (-1) : (1)));
 	        		} catch(Exception e) {
-	        			alien.addVerticalMovement(100 * ((ship.getScreenY() - alien.getScreenY() < 0) ? (-1) : (1)));
+	        			alienEntities.get(i).addVerticalMovement(100 * ((ship.getScreenY() - alienEntities.get(i).getScreenY() < 0) ? (-1) : (1)));
 	        		}
             	}
+            	try {
+            		if (alienEntities.get(i).collidesWith(alienEntities.get(i + 1))) {
+	            		if (alienEntities.get(i).getScreenX() + alienEntities.get(i).sprite.getWidth() >= alienEntities.get(i + 1).getScreenX() || alienEntities.get(i).getScreenX() <= alienEntities.get(i + 1).sprite.getWidth() + alienEntities.get(i + 1).getScreenX()) {
+	            			alienEntities.get(i).addHorizontalMovement(-(100 * Math.cos(theta)) * ((ship.getScreenX() - alienEntities.get(i).getScreenX() < 0) ? (-1) : (1)));
+	            		}
+	               	 	if (alienEntities.get(i).getScreenY() + alienEntities.get(i).sprite.getHeight() >= alienEntities.get(i + 1).getScreenY() || alienEntities.get(i).getScreenY() <= alienEntities.get(i + 1).sprite.getHeight() + alienEntities.get(i + 1).getScreenY()) {
+	               	 		alienEntities.get(i).addVerticalMovement(-(100 * Math.sin(theta)) * ((ship.getScreenY() - alienEntities.get(i).getScreenY() < 0) ? (-1) : (1)));
+	               	 	}
+            		}
+            	} catch (Exception e){}
             }
             
             // pause
@@ -742,5 +755,21 @@ public class Game extends Canvas {
 
 	public void setScreenHeight(int screenHeight) {
 		this.screenHeight = screenHeight;
+	}
+
+
+	/**
+	 * @return the theta
+	 */
+	public double getTheta() {
+		return theta;
+	}
+
+
+	/**
+	 * @param theta the theta to set
+	 */
+	public void setTheta(double theta) {
+		this.theta = theta;
 	}
 } // Game

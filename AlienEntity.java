@@ -79,7 +79,7 @@ public class AlienEntity extends Entity {
    *          with something
    */
    public void collidedWith(Entity other) {
-     // collisions with aliens are handled in ShotEntity and ShipEntity
+     
    } // collidedWith
 
 	/**

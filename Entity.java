@@ -144,10 +144,10 @@
           double testY = y;
 
           // which edge is closest?
-          if (x < this.getX()) testX = this.getX(); // test left edge
-          else if (x > this.getX() + this.sprite.getWidth()) testX = this.getX() + this.sprite.getWidth(); // right edge
-          if (y < this.getY()) testY = this.getY(); // top edge
-          else if (y > this.getY() + this.sprite.getHeight()) testY = this.getY() + this.sprite.getHeight(); // bottom edge
+          if (x < this.getScreenX()) testX = this.getScreenX(); // test left edge
+          else if (x > this.getScreenX() + this.sprite.getWidth()) testX = this.getScreenX() + this.sprite.getWidth(); // right edge
+          if (y < this.getScreenY()) testY = this.getScreenY(); // top edge
+          else if (y > this.getScreenY() + this.sprite.getHeight()) testY = this.getScreenY() + this.sprite.getHeight(); // bottom edge
 
           // get distance from closest edges
           double distX = x - testX;
